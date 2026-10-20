@@ -1,14 +1,4 @@
 #!/bin/bash
-
-# Set up the environment
-export PATH=/opt/anaconda3/bin:/opt/anaconda3/condabin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
-export CONDA_EXE=/opt/anaconda3/bin/conda
-export CONDA_PYTHON_EXE=/opt/anaconda3/bin/python
-export CONDA_PREFIX=/opt/anaconda3
-export CONDA_DEFAULT_ENV=base
-
-# Activate the conda environment
-source /opt/anaconda3/bin/activate base
-
-# Run the Python script
-/opt/anaconda3/bin/python /Users/kentahsu/Code/Personal/QOL_Score/For_Kenta/Scripts/UI.py
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+exec "$SCRIPT_DIR/../For_new_users/run_ui.sh"

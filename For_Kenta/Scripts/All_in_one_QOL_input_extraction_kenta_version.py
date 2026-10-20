@@ -1,3 +1,8 @@
+import os
+from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "For_new_users" / "Scripts"))
+from config import load_config
 #!/usr/bin/env python3
 
 import requests
@@ -6,12 +11,12 @@ import sys
 
 
 # For Kenta's Database
-NOTION_TOKEN = "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"
+NOTION_TOKEN = os.environ.get('QOL_NOTION_TOKEN', '')
 DATABASE_ID = "1924d9b143a980719cabc4f151bc30fb"
 
 '''
 # For Kazuma's Database
-NOTION_TOKEN = "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"
+NOTION_TOKEN = os.environ.get('QOL_NOTION_TOKEN', '')
 DATABASE_ID = "1954d9b143a981019212fbe32c21a6a1" 
 '''
 
@@ -127,7 +132,6 @@ all_values = {
 
 json_string = json.dumps(all_values, indent=4)
 print(json_string)
-
 
 
 

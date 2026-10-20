@@ -8,3 +8,9 @@
 __pycache__/
 *.pyc
 
+
+.venv/
+build/
+dist/
+config.local.json
+*.log

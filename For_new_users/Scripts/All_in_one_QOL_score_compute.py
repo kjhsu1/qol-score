@@ -1,3 +1,8 @@
+import os
+from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "For_new_users" / "Scripts"))
+from config import load_config
 #!/usr/bin/env python3
 
 import json
@@ -14,7 +19,7 @@ import QOL_LIB
 
 
 # !!!!!!!!!!! CHANGE THIS FOR OTHER USERS !!!!!!!!!!!!!!
-user = "Kenta"
+user = load_config()["user"]
 
 # first_part_of_path = "/Applications/QOL_Score/For_new_users_v2"
 
@@ -22,28 +27,9 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 
 # dict with all user info
 # includes "User Analysis Requests" database
-all_users = {
-    "Kenta": {
-        "NOTION_TOKEN": "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",
-        "DATABASE_ID": "1924d9b143a980719cabc4f151bc30fb"
-    },
+# !!!!!! NOTE: DO NOT PUSH ACTUAL NOTION API TOKENS, BELOW ARE JUST EXAMPLES
 
-    "Kazuma":{
-        "NOTION_TOKEN": "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",
-        "DATABASE_ID": "1954d9b143a981019212fbe32c21a6a1" 
-    },
-
-    "Eoin":{
-        "NOTION_TOKEN": "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",
-        "DATABASE_ID": "1f44d9b143a980559a2bffbe8e7ab9b5" 
-    },
-
-    "User_Analysis_Requests_Database":{
-        "NOTION_TOKEN": "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",
-        "DATABASE_ID": "1ad4d9b143a980e7806ece9c6a0eb626"
-    }
-
-}
+all_users = load_config()["all_users"]
 
 DATABASE_ID = all_users[user]["DATABASE_ID"]
 NOTION_TOKEN = all_users[user]["NOTION_TOKEN"]
@@ -198,7 +184,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
 
 

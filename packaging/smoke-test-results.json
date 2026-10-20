@@ -1,0 +1,26 @@
+{
+  "bundled": {
+    "ok": true,
+    "errors": [],
+    "window_size": [
+      1100,
+      748
+    ],
+    "screen_size": [
+      1312,
+      848
+    ]
+  },
+  "relocated_clean_home": {
+    "ok": true,
+    "errors": [],
+    "window_size": [
+      1100,
+      748
+    ],
+    "screen_size": [
+      1312,
+      848
+    ]
+  }
+}

@@ -1,5 +1,7 @@
 # QOL_Score
 
+**Mac app release and current setup:** see [SETUP.md](SETUP.md) for the bundled app, Notion configuration, sharing with friends, verification, and platform limits. Both current launchers use the same scoring model.
+
 `QOL_Score` is a Python desktop application that turns daily self-tracking into a structured personal analytics workflow. The project combines a custom scoring model, a local GUI, external API integration, time-series visualization, and lightweight automation patterns to quantify day-to-day quality of life and store the results in Notion.
 
 It is built as an end-to-end personal data product: user input, validation, scoring logic, persistence, trend analysis, ranking, and UI-driven interaction in one cohesive workflow.
@@ -134,10 +136,10 @@ This is a compact example of a real application pipeline that includes input, co
 
 The current implementation uses:
 
-- `Python 3.8`
+- `Python 3.11+`
 - `tkinter` for the desktop UI
 - `requests` for HTTP communication with Notion
-- `pytz` for timezone handling
+- `zoneinfo` for timezone handling
 - `Pillow` for working with images in the GUI
 - `matplotlib` for score plotting and trend visualization
 - `bash` for launch automation
@@ -190,16 +192,4 @@ In short, `QOL_Score` demonstrates product-minded engineering: identifying a pro
 
 ## Setup Notes
 
-For practical use, the main starting point is:
-
-`/Applications/QOL_Score/For_new_users`
-
-The environment file is located at:
-
-`/Applications/QOL_Score/For_new_users/environment.yml`
-
-The launch script is:
-
-`/Applications/QOL_Score/For_new_users/run_ui.sh`
-
-Configuration is currently stored directly in the Python scripts via the `user` variable and the `all_users` mapping. A natural next improvement would be moving tokens and database IDs into environment variables or a local config file excluded from version control.
+See [SETUP.md](SETUP.md). The supported source entry point is `For_new_users/run_ui.sh`; `For_Kenta/run_ui.sh` delegates to it. Use Python 3.11 or newer. Account credentials live in the user's private Application Support directory, outside the repository and app bundle.

@@ -1,0 +1,22 @@
+# Tested build environment: CPython 3.11, macOS arm64; NumPy requires macOS 14+.
+altgraph==0.17.5
+certifi==2026.10.19
+charset-normalizer==3.5.2
+contourpy==1.3.3
+cycler==0.12.1
+fonttools==4.67.0
+idna==3.20
+kiwisolver==1.5.1
+macholib==1.16.4
+matplotlib==3.11.2
+numpy==2.4.6
+packaging==26.3
+pillow==12.3.0
+pyinstaller==6.22.3
+pyinstaller-hooks-contrib==2026.8
+pyparsing==3.3.3
+python-dateutil==2.9.0.post0
+requests==2.34.2
+six==1.17.0
+tzdata==2026.5
+urllib3==2.8.0
