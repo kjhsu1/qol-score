@@ -10,6 +10,19 @@ def run(report_path):
     import ranking
     errors = []
     report = {'ok': False, 'errors': errors}
+    import ssl
+    import certifi
+    from zoneinfo import ZoneInfo
+    from datetime import datetime
+    try:
+        for zone in ('America/Los_Angeles', 'Europe/London', 'Asia/Tokyo'):
+            assert datetime(2026, 1, 1, tzinfo=ZoneInfo(zone)).utcoffset() is not None
+        report['timezone_data'] = 'passed'
+        context = ssl.create_default_context(cafile=certifi.where())
+        assert context.cert_store_stats()['x509_ca'] > 0
+        report['tls_certificates'] = 'passed'
+    except Exception as exc:
+        errors.append(str(exc))
     config = {'user': 'Offline test', 'timezone': 'America/Los_Angeles',
               'all_users': {'Offline test': {'NOTION_TOKEN': 'offline', 'DATABASE_ID': 'offline'}}}
     def inspect(root):
@@ -111,7 +124,9 @@ def run(report_path):
             UI.display_qol_score({'qol_score': 80, 'streak': 2})
             UI.display_analysis_results(root, 'Offline smoke test')
             ranking.display_it([('Offline test', 80)], parent=root)
-            UI.plot_qol_score([('2026-10-19', 80), ('2026-10-20', 90)])
+            import matplotlib.pyplot as plt
+            with patch.object(plt, 'show', side_effect=lambda: plt.close('all')):
+                UI.plot_qol_score([('2026-10-19', 80), ('2026-10-20', 90)])
             root.update_idletasks()
             report['window_size'] = [root.winfo_width(), root.winfo_height()]
             report['screen_size'] = [root.winfo_screenwidth(), root.winfo_screenheight()]
@@ -123,10 +138,48 @@ def run(report_path):
     try:
         with patch.object(UI, 'load_config', return_value=config), \
              patch.object(UI, 'get_highest_entry_number', return_value=0), \
-             patch.object(UI.messagebox, 'showerror', side_effect=lambda *args, **kw: errors.append(str(args))), \
-             patch.object(UI.plt, 'show', side_effect=lambda: UI.plt.close('all')):
+             patch.object(UI.messagebox, 'showerror', side_effect=lambda *args, **kw: errors.append(str(args))):
             UI.main(on_ready=inspect)
     except Exception as exc:
         errors.append(str(exc))
+    Path(report_path).write_text(json.dumps(report, indent=2))
+    return 0 if report['ok'] else 1
+
+
+def run_startup(report_path):
+    """Exercise real first-run welcome with no account, plotting, or network."""
+    import sys
+    import time
+    started = time.monotonic()
+    import requests
+    import UI
+    from config import config_path
+    report = {'ok': False, 'errors': []}
+    if config_path().exists():
+        report['errors'].append('Select a nonexistent QOL_CONFIG for the fresh-start test.')
+        Path(report_path).write_text(json.dumps(report, indent=2))
+        return 1
+    def first_window(root):
+        def inspect():
+            try:
+                welcome = next(w for w in root.winfo_children()
+                               if isinstance(w, tk.Toplevel) and w.title() == 'Welcome to QOL Score')
+                if not welcome.winfo_viewable():
+                    raise RuntimeError('First-run welcome is not visible.')
+                if 'matplotlib' in sys.modules:
+                    raise RuntimeError('Plotting was imported before onboarding.')
+                report.update(ok=True, welcome_visible=True, matplotlib_loaded=False,
+                              seconds_to_welcome=round(time.monotonic() - started, 3))
+                welcome.destroy()
+            except Exception as exc:
+                report['errors'].append(str(exc))
+                root.destroy()
+        root.after(250, inspect)
+    try:
+        with patch.object(requests.Session, 'request', side_effect=AssertionError('Startup must not use the network')):
+            UI.main(on_window_ready=first_window)
+    except Exception as exc:
+        report['errors'].append(str(exc))
+        report['ok'] = False
     Path(report_path).write_text(json.dumps(report, indent=2))
     return 0 if report['ok'] else 1

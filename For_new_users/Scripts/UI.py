@@ -13,10 +13,6 @@ import os
 import threading
 import random
 from PIL import Image, ImageTk
-import matplotlib
-matplotlib.use("TkAgg")
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 import QOL_LIB # my homemade library 
 
 
@@ -109,6 +105,14 @@ def resize_image(image_path, width, height):
     resized_image = image.resize((width, height), Image.LANCZOS)  # Use Image.LANCZOS instead of Image.ANTIALIAS
     return ImageTk.PhotoImage(resized_image)
 
+def prepare_plotting():
+    # Font discovery can be slow on a new Mac. Run it in the History worker,
+    # leaving setup, saves and rankings independent of plotting.
+    import matplotlib
+    matplotlib.use("TkAgg")
+    import matplotlib.font_manager
+
+
 def fetch_qol_entries():
     entries = []
     for page in client.query(sorts=[{'property': 'Date', 'direction': 'ascending'}]):
@@ -117,12 +121,17 @@ def fetch_qol_entries():
         score = props.get('QOL Score', {}).get('number')
         if date and score is not None:
             entries.append((date, float(score)))
+    if entries:
+        prepare_plotting()
     return entries
 
 def plot_qol_score(entries):
     if not entries:
         messagebox.showwarning("No Data", "No QOL data available to plot.")
         return
+
+    import matplotlib.pyplot as plt
+    import matplotlib.dates as mdates
 
     scores_by_day = defaultdict(list)
     for date, score in entries:
@@ -346,17 +355,33 @@ def export_group():
     export_invitation(root, config)
 
 
-def main(on_ready=None):
+def main(on_ready=None, on_window_ready=None):
     global root, config, user, all_users, client, controls, status_var, entry_number_entry, wake_time_entry, sleep_time_entry, exercise_var, outside_var, talk_var, social_media_entry, todays_date_entry, time_focused_entry, offday_special_day_var, diary_entry
     # MAIN TKINTER THREAD
     root = tk.Tk()
-    root.title("Daily QOL Data Input")
+    root.title("QOL Score")
+    root.geometry('560x220')
+    opening = ttk.Label(root, text='Opening QOL Score…', padding=25)
+    opening.pack()
+    root.update_idletasks()
+    if on_window_ready is not None:
+        on_window_ready(root)
+    opening.destroy()
     try:
         config = load_config()
-    except ValueError as exc:
-        messagebox.showerror('Configuration error', str(exc), parent=root)
-        root.destroy()
-        return
+    except (ValueError, OSError) as exc:
+        from config import backup_config
+        if not messagebox.askyesno('Cannot load settings',
+                f'{exc}\n\nBack up the existing settings and run setup again?', parent=root):
+            root.destroy()
+            return
+        try:
+            backup_config()
+        except OSError as backup_error:
+            messagebox.showerror('Cannot back up settings', str(backup_error), parent=root)
+            root.destroy()
+            return
+        config = None
     if config is None:
         config = first_run(root)
         if config is None:
