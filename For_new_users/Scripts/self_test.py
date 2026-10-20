@@ -95,6 +95,19 @@ def run(report_path):
             if rows['Dan'][2:4] != ('36.2', '2026-10-18'):
                 raise RuntimeError('Ranking score/date changed while adding streaks.')
             report['ranking_streaks'] = 'passed'
+            scoring_example = {'wake_time': '2026-10-20T08:30:00', 'sleep_time': '2026-10-20T23:30:00',
+                               'todays_date': '2026-10-20', 'exercise': 'Yes', 'outside': 'Yes',
+                               'talk': 'Yes', 'social_media': '0', 'time_focused': '495', 'offday_special_day': 'No'}
+            for changes, expected in [({}, 95), ({'time_focused': '630', 'exercise': 'No'}, 97),
+                                      ({'time_focused': '666', 'exercise': 'No', 'outside': 'No'}, 100),
+                                      ({'time_focused': '700', 'sleep_time': '2026-10-20T23:31:00'}, 99.8)]:
+                actual = UI.QOL_LIB.calculate_qol_score(dict(scoring_example, **changes))
+                if abs(actual - expected) > 1e-8:
+                    raise RuntimeError('Bundled two-route scoring or 11:30 PM bedtime is incorrect.')
+            if not UI.build_default_datetime_strings()['sleep_time'].endswith('T23:30:00'):
+                raise RuntimeError('Form bedtime does not default to 11:30 PM.')
+            report['two_route_scoring'] = 'passed'
+            report['ideal_bedtime'] = '23:30'
             UI.display_qol_score({'qol_score': 80, 'streak': 2})
             UI.display_analysis_results(root, 'Offline smoke test')
             ranking.display_it([('Offline test', 80)], parent=root)

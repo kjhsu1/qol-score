@@ -18,7 +18,7 @@ import requests
 
 
 def sample(**overrides):
-    data = dict(wake_time='2026-10-19T08:30:00', sleep_time='2026-10-19T23:59:00',
+    data = dict(wake_time='2026-10-19T08:30:00', sleep_time='2026-10-19T23:30:00',
                 todays_date='2026-10-19', exercise='Yes', outside='Yes', talk='Yes',
                 social_media='0', time_focused='700', offday_special_day='No', diary='')
     return dict(data, **overrides)
@@ -40,12 +40,13 @@ class ScoringTests(unittest.TestCase):
     def test_perfect_day(self):
         self.assertEqual(calculate_qol_score(sample()), 100)
 
-    def test_preserves_regular_scoring(self):
-        self.assertAlmostEqual(calculate_qol_score(sample(time_focused='600')), 91.87836383207751)
+    def test_healthy_route_wins_with_all_habits(self):
+        self.assertAlmostEqual(calculate_qol_score(sample(time_focused='495')), 95)
+        self.assertEqual(calculate_qol_score(sample(time_focused='540')), 100)
 
-    def test_midnight_is_adjacent_to_bedtime(self):
-        self.assertAlmostEqual(calculate_qol_score(sample(sleep_time='2026-10-20T00:01:00')), 99.6)
-        self.assertAlmostEqual(calculate_qol_score(sample(sleep_time='2026-10-19T00:01:00')), 99.6)
+    def test_midnight_uses_waking_day_bedtime(self):
+        self.assertAlmostEqual(calculate_qol_score(sample(sleep_time='2026-10-20T00:01:00')), 93.8)
+        self.assertAlmostEqual(calculate_qol_score(sample(sleep_time='2026-10-19T00:01:00')), 93.8)
 
     def test_rejects_equal_times(self):
         with self.assertRaises(ValueError):
@@ -78,7 +79,9 @@ class ScoringTests(unittest.TestCase):
         path=ROOT/'For_Kenta/Scripts/QOL_LIB.py'
         spec=importlib.util.spec_from_file_location('kenta_model',path)
         module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
-        self.assertEqual(module.calculate_qol_score(sample()),calculate_qol_score(sample()))
+        example=sample(time_focused='630',exercise='No',outside='No')
+        self.assertEqual(module.calculate_qol_score(example),94)
+        self.assertEqual(module.calculate_qol_score(example),calculate_qol_score(example))
 
     def test_ui_import_has_no_window_or_requests(self):
         import UI
@@ -135,12 +138,14 @@ class NotionTests(unittest.TestCase):
 
     def test_save_normalizes_payload_and_chunks_diary(self):
         client,session=self.client([response({'results':[]}),response({'results':[page(9)]}),response({'id':'created'})])
-        data=validate_data(sample(diary='あ'*4200)); data['qol_score']=100
+        data=validate_data(sample(diary='あ'*4200, time_focused='630', exercise='No', outside='No'))
+        data['qol_score']=round(calculate_qol_score(data),1)
         saved=client.save(data)
         payload=session.request.call_args.kwargs['json']
         self.assertEqual(saved['entry_number'],'10')
         self.assertEqual(saved['streak'],3)
         self.assertEqual(payload['parent'],{'data_source_id':'source'})
+        self.assertEqual(payload['properties']['QOL Score']['number'],94)
         self.assertEqual(len(payload['properties']['Diary']['rich_text']),3)
         self.assertEqual(payload['properties']['Date']['date']['start'],'2026-10-19')
         self.assertTrue(payload['properties']['Wake Time']['date']['start'].endswith('-07:00'))

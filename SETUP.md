@@ -79,6 +79,10 @@ Group onboarding populates the full `all_users` participant list automatically. 
 
 The existing rule that an off day scores **100** is preserved. Agree on when off days are allowed before competing. Scores are self-reported. Streaks count consecutive recorded entries scoring at least 65 (or below 65), rather than requiring consecutive calendar days.
 
+## Scoring rules (version 1.3.0)
+
+See [SCORING.md](SCORING.md) for every variable and deduction. The app now picks the better of the continuous healthy (60% focus target, 10 points per missed habit) and productive routes (70% baseline, 1.5 points per focus percentage point and 3 points per missed habit, with extra focus offsetting those habit deductions). Ideal bedtime is **11:30 PM**. Wake/social-media penalties, off-day overrides and streak rules retain their existing behavior. These rules apply to new entries; historical Notion records are not recalculated. All competing participants should update to the same version.
+
 ## Daily use and safeguards
 
 - Enter wake time on the day being logged, and bedtime later that day or early the next day. If bedtime is entered after midnight with the same date as waking, the app moves it to the next day before calculating and saving.

@@ -40,17 +40,20 @@ def calculate_qol_score(data):
     data = validate_data(data)
     wake = datetime.fromisoformat(data['wake_time'])
     sleep = datetime.fromisoformat(data['sleep_time'])
-    efficiency = data['time_focused'] / ((sleep - wake).total_seconds() / 60)
+    focus_percent = data['time_focused'] / ((sleep - wake).total_seconds() / 60) * 100
+    missed_habits = sum(data[field] == 'No' for field in ('exercise', 'outside', 'talk'))
+
+    # Score both routes continuously; extra focus can offset the productive
+    # route's habit deductions, but can never offset timing or social-media costs.
+    healthy_deduction = max(0.0, 60 - focus_percent) + 10 * missed_habits
+    productive_deduction = max(0.0, 1.5 * (70 - focus_percent) + 3 * missed_habits)
+    score = 100 - min(healthy_deduction, productive_deduction)
+
     wake_penalty = min(max((wake - wake.replace(hour=8, minute=30, second=0)).total_seconds() / 60, 0) * .2, 15)
-    # Bedtime is relative to the waking day, so 00:01 is two minutes after 23:59.
-    ideal_sleep = wake.replace(hour=23, minute=59, second=0)
+    # Anchor bedtime to the waking day, including when sleep is after midnight.
+    ideal_sleep = wake.replace(hour=23, minute=30, second=0)
     sleep_penalty = min(abs((sleep - ideal_sleep).total_seconds() / 60) * .2, 15)
-    score = 100 - wake_penalty - sleep_penalty - max(data['social_media'] - 45, 0) * .2
-    if efficiency < .6:
-        score -= sum(10 for field in ('exercise', 'outside', 'talk') if data[field] == 'No')
-        score -= (.6 - efficiency) * 100
-    elif efficiency < .7:
-        score -= (.7 - efficiency) * 150
+    score -= wake_penalty + sleep_penalty + max(data['social_media'] - 45, 0) * .2
     if data['offday_special_day'] == 'Yes':
         return 100.0
     return max(0.0, min(100.0, score))

@@ -44,7 +44,7 @@ def build_default_datetime_strings(now=None):
     today = now.strftime("%Y-%m-%d")
     return {
         "wake_time": f"{today}T08:00:00",
-        "sleep_time": f"{today}T23:00:00",
+        "sleep_time": f"{today}T23:30:00",
         "todays_date": today,
     }
 

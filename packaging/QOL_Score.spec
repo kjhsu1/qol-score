@@ -17,4 +17,4 @@ exe = EXE(pyz, analysis.scripts, [], exclude_binaries=True, name='QOL Score',
           debug=False, strip=False, upx=False, console=False)
 collect = COLLECT(exe, analysis.binaries, analysis.datas, strip=False, upx=False, name='QOL Score')
 app = BUNDLE(collect, name='QOL Score.app', bundle_identifier='com.qolscore.desktop',
-             info_plist={'CFBundleShortVersionString': '1.2.1', 'NSHighResolutionCapable': True, 'LSMinimumSystemVersion': '14.0'})
+             info_plist={'CFBundleShortVersionString': '1.3.0', 'NSHighResolutionCapable': True, 'LSMinimumSystemVersion': '14.0'})
