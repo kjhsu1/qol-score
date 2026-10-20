@@ -1,8 +1,19 @@
 {
-  "version": "1.3.0",
-  "relocated_bundle": {
+  "fresh_start": {
     "ok": true,
     "errors": [],
+    "welcome_visible": true,
+    "matplotlib_loaded": false,
+    "seconds_to_welcome": 0.921,
+    "process_seconds": 1.645,
+    "font_cache_files": 0,
+    "exit_code": 0
+  },
+  "cold_full_gui": {
+    "ok": true,
+    "errors": [],
+    "timezone_data": "passed",
+    "tls_certificates": "passed",
     "group_onboarding": "passed",
     "group_cancel_during_check": "passed",
     "ranking_streaks": "passed",
@@ -15,6 +26,35 @@
     "screen_size": [
       1312,
       848
-    ]
+    ],
+    "process_seconds": 16.959,
+    "font_cache_files": 1,
+    "exit_code": 0
+  },
+  "warm_full_gui": {
+    "ok": true,
+    "errors": [],
+    "timezone_data": "passed",
+    "tls_certificates": "passed",
+    "group_onboarding": "passed",
+    "group_cancel_during_check": "passed",
+    "ranking_streaks": "passed",
+    "two_route_scoring": "passed",
+    "ideal_bedtime": "23:30",
+    "window_size": [
+      1100,
+      748
+    ],
+    "screen_size": [
+      1312,
+      848
+    ],
+    "process_seconds": 3.144,
+    "font_cache_files": 1,
+    "exit_code": 0
+  },
+  "recovery_and_offline_gui": {
+    "real_gui_settings_recovery": "passed",
+    "real_gui_offline_startup_and_save": "passed"
   }
 }
