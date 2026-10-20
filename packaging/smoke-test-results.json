@@ -1,10 +1,11 @@
 {
-  "version": "1.2.0",
+  "version": "1.2.1",
   "relocated_bundle": {
     "ok": true,
     "errors": [],
     "group_onboarding": "passed",
     "group_cancel_during_check": "passed",
+    "ranking_streaks": "passed",
     "window_size": [
       1100,
       748

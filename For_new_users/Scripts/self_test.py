@@ -71,8 +71,30 @@ def run(report_path):
                     if canceled.result is not None:
                         raise RuntimeError('Canceled setup unexpectedly changed the account.')
                 report['group_cancel_during_check'] = 'passed'
-            ranking.display_rankings({'scores': {'Alice': 90}, 'dates': {'Alice': '2026-10-19'},
-                                      'empty': ['Bob'], 'unavailable': {'Cathy': 'Offline'}}, parent=root)
+            rank_window = ranking.display_rankings({
+                'scores': {'Alice': 90, 'Dan': 36.2, 'Erin': 50, 'Frank': 70},
+                'dates': {'Alice': '2026-10-19', 'Dan': '2026-10-18'},
+                'streaks': {'Alice': 4, 'Dan': -3, 'Erin': 0},
+                'empty': ['Bob'], 'unavailable': {'Cathy': 'Offline'}}, parent=root)
+            def find_table(widget):
+                if isinstance(widget, ranking.ttk.Treeview):
+                    return widget
+                for child in widget.winfo_children():
+                    found = find_table(child)
+                    if found is not None:
+                        return found
+                return None
+            table = find_table(rank_window)
+            if table is None:
+                raise RuntimeError('Ranking table did not render.')
+            rows = {table.item(item, 'values')[1]: table.item(item, 'values') for item in table.get_children()}
+            for name, expected in [('Alice', 'Good · 4'), ('Dan', 'Bad · 3'),
+                                   ('Erin', 'No streak'), ('Frank', 'Unknown'), ('Bob', '—'), ('Cathy', '—')]:
+                if rows[name][4] != expected:
+                    raise RuntimeError('Incorrect streak display for ' + name)
+            if rows['Dan'][2:4] != ('36.2', '2026-10-18'):
+                raise RuntimeError('Ranking score/date changed while adding streaks.')
+            report['ranking_streaks'] = 'passed'
             UI.display_qol_score({'qol_score': 80, 'streak': 2})
             UI.display_analysis_results(root, 'Offline smoke test')
             ranking.display_it([('Offline test', 80)], parent=root)

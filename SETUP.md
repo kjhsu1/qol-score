@@ -75,7 +75,7 @@ Everyone should use this same app version. The older Kenta and newer user models
 
 Rankings show each configured person's latest numbered entry, including zero scores. Entries with equal scores sort by display name. Dates can differ: this is a latest-entry leaderboard, not a same-date competition. Agree on a daily submission deadline if comparing days.
 
-Group onboarding populates the full `all_users` participant list automatically. Rankings display all configured participants, their latest scores and dates, and explicit **No score** or **Unavailable** rows. If any connection fails, the window is labeled **PARTIAL RANKINGS**; available scores remain visible. Fix the connection and click Rankings again to retry.
+Group onboarding populates the full `all_users` participant list automatically. Rankings display all configured participants, their latest scores, dates, and current streaks, and explicit **No score** or **Unavailable** rows. If any connection fails, the window is labeled **PARTIAL RANKINGS**; available scores remain visible. Fix the connection and click Rankings again to retry. The Current streak column shows `Good · 4` for four good recorded entries, `Bad · 2` for two bad recorded entries, `No streak` for zero, and `Unknown` when streak data is missing or invalid. Score, date, and streak are all read from the same latest entry.
 
 The existing rule that an off day scores **100** is preserved. Agree on when off days are allowed before competing. Scores are self-reported. Streaks count consecutive recorded entries scoring at least 65 (or below 65), rather than requiring consecutive calendar days.
 

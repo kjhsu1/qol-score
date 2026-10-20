@@ -8,7 +8,7 @@ from unittest.mock import Mock
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'For_new_users' / 'Scripts'))
 from group_setup import database_id, validate_invitation, read_invitation, make_invitation, group_config, connect_and_save, check_connections
 from config import load_config
-from ranking import retrieve_rankings
+from ranking import retrieve_rankings, format_streak
 
 
 def invitation():
@@ -127,6 +127,35 @@ class GroupRankingTests(unittest.TestCase):
         self.assertEqual(list(result['unavailable']),['Bob'])
         self.assertNotIn('token-Bob',result['unavailable']['Bob'])
         self.assertEqual(result['dates']['Dan'],'2026-10-19')
+
+    def test_streak_status_and_count(self):
+        for value, expected in [(4, 'Good · 4'), (-2, 'Bad · 2'), (1.0, 'Good · 1'),
+                                (-1, 'Bad · 1'), (0, 'No streak'), (None, 'Unknown'),
+                                (True, 'Unknown'), (2.5, 'Unknown'), ('3', 'Unknown'),
+                                (float('nan'), 'Unknown'), (float('inf'), 'Unknown')]:
+            with self.subTest(value=value):
+                self.assertEqual(format_streak(value), expected)
+
+    def test_score_date_and_streak_come_from_same_latest_entry(self):
+        client=Mock()
+        client.latest.return_value={'properties': {'QOL Score': {'number': 36.2},
+            'Date': {'date': {'start': '2026-10-19'}}, 'Streak': {'number': -3}}}
+        factory=Mock(return_value=client)
+        result=retrieve_rankings({'Alice': {'DATABASE_ID': 'db', 'NOTION_TOKEN': 'test'}},factory)
+        self.assertEqual(result['scores']['Alice'],36.2)
+        self.assertEqual(result['dates']['Alice'],'2026-10-19')
+        self.assertEqual(result['streaks']['Alice'],-3)
+        self.assertEqual(format_streak(result['streaks']['Alice']),'Bad · 3')
+        client.latest.assert_called_once()
+        factory.assert_called_once()
+
+    def test_missing_streak_preserves_score(self):
+        client=Mock()
+        client.latest.return_value={'properties': {'QOL Score': {'number': 80}, 'Streak': {'number': None}}}
+        result=retrieve_rankings({'Alice': {'DATABASE_ID': 'db', 'NOTION_TOKEN': 'test'}},lambda connection: client)
+        self.assertEqual(result['scores'], {'Alice':80})
+        self.assertEqual(result['unavailable'],{})
+        self.assertEqual(format_streak(result['streaks']['Alice']),'Unknown')
 
     def test_analysis_connection_is_not_a_competitor(self):
         result=retrieve_rankings({'User_Analysis_Requests_Database':{}},lambda connection: self.fail('Should not connect'))
