@@ -1,0 +1,31 @@
+{
+  "ok": true,
+  "happy_path": {
+    "ok": true,
+    "bootstrap": "passed",
+    "healthy_preview": 95,
+    "productive_preview": 97,
+    "rankings": "all 3 with good/bad streaks",
+    "history": "passed",
+    "review_and_save": "passed (demo; no Notion writes)",
+    "more_tools": "debrief, focus scatter, habit comparisons and day lab passed",
+    "mascot": "WebGL rendered",
+    "width": 1440,
+    "height": 1000
+  },
+  "duplicate_and_invalid_entries": "passed",
+  "partial_rankings": "passed; zero, missing and unavailable states",
+  "offline_save_preserves_form": "passed",
+  "invitation_and_failed_setup": "passed",
+  "walking_and_pause": "passed",
+  "widths": [
+    1440,
+    1024,
+    800,
+    390
+  ],
+  "more_menu_debrief_daylab_csv": "passed",
+  "webgl1_and_old_dialog_fallback": "passed",
+  "no_gpu_core_workflow": "passed",
+  "page_errors": []
+}

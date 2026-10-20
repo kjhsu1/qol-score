@@ -1,0 +1,13 @@
+{
+  "analysis_days": 6,
+  "history_entries_read": 6,
+  "latest_entry_read": true,
+  "mascot": "ready",
+  "mode": "read-only; no write endpoints called",
+  "ok": true,
+  "participants": [
+    "Kenta",
+    "Kazuma",
+    "Eoin"
+  ]
+}

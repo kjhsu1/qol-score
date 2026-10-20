@@ -1,7 +1,5 @@
 """Rank all configured participants and identify incomplete results explicitly."""
 import math
-import tkinter as tk
-from tkinter import ttk
 from core import top_three
 from notion_client import NotionClient
 
@@ -52,6 +50,8 @@ def format_streak(value):
 
 
 def display_it(rank, parent=None, details=None):
+    import tkinter as tk
+    from tkinter import ttk
     window = tk.Toplevel(parent) if parent else tk.Tk()
     window.title('QOL Group Rankings')
     window.geometry('850x480')

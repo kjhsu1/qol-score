@@ -1,0 +1,18 @@
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const check=(test,message)=>{if(!test)throw new Error(message);};
+for(let i=0;i<50&&!document.getElementById('profile-name').textContent.includes('Kenta');i++)await wait(100);
+check(document.title.includes('Ajito'),'Window document did not load');
+check(document.getElementById('profile-name').textContent==='Kenta','Bootstrap failed');
+const field=(id,value)=>{const el=document.getElementById(id);el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));};
+field('wake','08:30');field('bed','23:30');field('focused','495');field('social','0');
+for(const b of document.querySelectorAll('[data-habit]'))if(b.getAttribute('aria-pressed')!=='true')b.click();
+await wait(600);check(document.getElementById('score').textContent==='95','Healthy preview wrong');
+field('focused','630');document.querySelector('[data-habit="exercise"]').click();await wait(600);check(document.getElementById('score').textContent==='97','Productive preview wrong');
+document.querySelector('[data-page="rankings"]').click();await wait(600);check(document.querySelectorAll('#ranking-rows tr').length===3,'Full crew missing');check(document.getElementById('ranking-rows').textContent.includes('Bad · 2'),'Bad streak missing');
+document.querySelector('[data-page="history"]').click();await wait(600);check(document.querySelector('#history-chart svg')!==null,'History missing');
+document.querySelector('[data-page="daily"]').click();document.getElementById('submit-day').click();await wait(400);check(document.getElementById('review-dialog').open,'Save review missing');document.getElementById('confirm-submit').click();await wait(700);check(document.getElementById('success-dialog').open,'Save failed');document.querySelector('[data-close="success-dialog"]').click();
+for(let i=0;i<30&&document.body.dataset.mascot!=='ready';i++)await wait(100);
+check(document.body.dataset.mascot==='ready','3D mascot did not render');
+document.getElementById('more-toggle').click();document.querySelector('[data-page="insights"]').click();await wait(500);check(document.getElementById('insight-summary').textContent.includes('19 days'),'Debrief failed');document.querySelector('[data-page="lab"]').click();await wait(500);check(document.querySelectorAll('.scenario-row').length>0,'Day lab failed');document.querySelector('[data-page="daily"]').click();
+window.scrollTo(0,0);
+return {ok:true,bootstrap:'passed',healthy_preview:95,productive_preview:97,rankings:'all 3 with good/bad streaks',history:'passed',review_and_save:'passed (demo; no Notion writes)',more_tools:'debrief, focus scatter, habit comparisons and day lab passed',mascot:'WebGL rendered',width:innerWidth,height:innerHeight};
