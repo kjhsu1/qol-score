@@ -1,6 +1,6 @@
 # QOL_Score
 
-**Mac app release and current setup:** see [SETUP.md](SETUP.md) for the bundled app, Notion configuration, sharing with friends, verification, and platform limits. Both current launchers use the same scoring model.
+**Mac app release and current setup:** see [SETUP.md](SETUP.md) for the bundled app, Notion configuration, sharing with friends, verification, and platform limits. Both current launchers use the same scoring model. For a master Notion account, use group onboarding to import the participant list, choose your identity, and check every ranking connection.
 
 `QOL_Score` is a Python desktop application that turns daily self-tracking into a structured personal analytics workflow. The project combines a custom scoring model, a local GUI, external API integration, time-series visualization, and lightweight automation patterns to quantify day-to-day quality of life and store the results in Notion.
 
@@ -104,7 +104,7 @@ This file contains the core scoring model. It computes a QOL score from daily in
 
 ### `For_new_users/Scripts/ranking.py`
 
-This module retrieves the latest score for each configured user and displays a top-three ranking in a themed Tkinter window. It demonstrates cross-user aggregation and presentation logic on top of shared data infrastructure.
+This module retrieves the latest score for each configured user and displays a group ranking in a themed Tkinter window. It demonstrates cross-user aggregation and presentation logic on top of shared data infrastructure.
 
 ### `For_new_users/Scripts/All_in_one_QOL_input_extraction.py`
 

@@ -196,8 +196,8 @@ def update_and_display_everything():
 
 def run_ranking_as_subprocess():
     import ranking
-    run_async(lambda: ranking.retrieve_all_users_QOL(all_users),
-              lambda scores: ranking.display_it(ranking.get_top_three(scores), parent=root))
+    run_async(lambda: ranking.retrieve_rankings(all_users),
+              lambda result: ranking.display_rankings(result, parent=root))
 
 # update the analysis request database
 def update_analysis_request_database():
@@ -266,6 +266,11 @@ def check_for_analysis():
     run_async(fetch, lambda text: display_analysis_results(root, text))
 
 def first_run(parent):
+    from onboarding import welcome
+    return welcome(parent, individual_setup)
+
+
+def individual_setup(parent):
     from tkinter import simpledialog
     values = {}
     for key, prompt, default in [
@@ -322,6 +327,25 @@ def run_async(work, success):
     root.after(100, poll)
 
 
+def change_group():
+    if any(str(button['state']) == 'disabled' for button in controls):
+        messagebox.showinfo('Please wait', 'Wait for the current request to finish.', parent=root)
+        return
+    from onboarding import join_group
+    updated = join_group(root, config)
+    if updated is not None:
+        messagebox.showinfo('Group connected', 'All participant connections passed. Reopen QOL Score to use the saved settings.', parent=root)
+        root.destroy()
+
+
+def export_group():
+    if any(str(button['state']) == 'disabled' for button in controls):
+        messagebox.showinfo('Please wait', 'Wait for the current request to finish.', parent=root)
+        return
+    from onboarding import export_invitation
+    export_invitation(root, config)
+
+
 def main(on_ready=None):
     global root, config, user, all_users, client, controls, status_var, entry_number_entry, wake_time_entry, sleep_time_entry, exercise_var, outside_var, talk_var, social_media_entry, todays_date_entry, time_focused_entry, offday_special_day_var, diary_entry
     # MAIN TKINTER THREAD
@@ -343,6 +367,12 @@ def main(on_ready=None):
     all_users = config['all_users']
     client = NotionClient(all_users[user], config['timezone'])
     root.title(f'QOL Score — {user}')
+    menu = tk.Menu(root)
+    group_menu = tk.Menu(menu, tearoff=False)
+    group_menu.add_command(label='Join or update group…', command=change_group)
+    group_menu.add_command(label='Export group invitation…', command=export_group)
+    menu.add_cascade(label='Group', menu=group_menu)
+    root.config(menu=menu)
 
     # Set the initial window size (width x height)
     root.geometry(f"{min(1100, root.winfo_screenwidth()-80)}x{min(900, root.winfo_screenheight()-100)}")  # Adjust the size as needed

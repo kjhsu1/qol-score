@@ -1,19 +1,10 @@
 {
-  "bundled": {
+  "version": "1.2.0",
+  "relocated_bundle": {
     "ok": true,
     "errors": [],
-    "window_size": [
-      1100,
-      748
-    ],
-    "screen_size": [
-      1312,
-      848
-    ]
-  },
-  "relocated_clean_home": {
-    "ok": true,
-    "errors": [],
+    "group_onboarding": "passed",
+    "group_cancel_during_check": "passed",
     "window_size": [
       1100,
       748

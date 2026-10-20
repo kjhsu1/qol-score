@@ -1,0 +1,16 @@
+{
+  "format": "qol-group",
+  "version": 1,
+  "group_name": "Our QOL Group",
+  "timezone": "America/Los_Angeles",
+  "participants": [
+    {
+      "name": "Replace with your name",
+      "database_id": "00000000000000000000000000000001"
+    },
+    {
+      "name": "Replace with friend name",
+      "database_id": "00000000000000000000000000000002"
+    }
+  ]
+}

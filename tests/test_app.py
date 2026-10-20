@@ -189,7 +189,7 @@ class ConfigTests(unittest.TestCase):
             path=Path(directory)/'account.json'
             with patch.dict(os.environ, {'QOL_CONFIG':str(path)}), \
                  patch('tkinter.simpledialog.askstring', side_effect=['Alice','test-token','database','Europe/London']):
-                result=UI.first_run(None)
+                result=UI.individual_setup(None)
             self.assertEqual(result['user'],'Alice')
             self.assertEqual(load_config(path)['timezone'],'Europe/London')
             self.assertEqual(path.stat().st_mode & 0o777,0o600)
@@ -201,7 +201,7 @@ class ConfigTests(unittest.TestCase):
             path=Path(directory)/'account.json'
             with patch.dict(os.environ, {'QOL_CONFIG':str(path)}), \
                  patch('tkinter.simpledialog.askstring', return_value=None):
-                self.assertIsNone(UI.first_run(None))
+                self.assertIsNone(UI.individual_setup(None))
             self.assertFalse(path.exists())
 
     def test_invalid_config(self):

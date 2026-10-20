@@ -1,39 +1,79 @@
-"""Rank current entry numbers consistently, including zero scores and ties."""
-from pathlib import Path
+"""Rank all configured participants and identify incomplete results explicitly."""
+import math
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk
 from core import top_three
 from notion_client import NotionClient
 
 
-def retrieve_all_users_QOL(all_users):
-    scores = {}
+def retrieve_rankings(all_users, client_factory=NotionClient):
+    scores, dates, unavailable, empty = {}, {}, {}, []
     for name, connection in all_users.items():
         if name == 'User_Analysis_Requests_Database':
             continue
-        page = NotionClient(connection).latest()
-        if page:
-            scores[name] = page.get('properties', {}).get('QOL Score', {}).get('number')
-    return scores
+        try:
+            page = client_factory(connection).latest()
+            props = page.get('properties', {}) if page else {}
+            score = props.get('QOL Score', {}).get('number')
+            if score is None:
+                empty.append(name)
+                continue
+            if isinstance(score, bool) or not math.isfinite(float(score)) or not 0 <= float(score) <= 100:
+                raise ValueError('Latest entry has an invalid score.')
+            scores[name] = float(score)
+            dates[name] = (props.get('Date', {}).get('date') or {}).get('start', '')[:10]
+        except Exception as exc:
+            unavailable[name] = str(exc).replace(connection['NOTION_TOKEN'], '[token hidden]')
+    return {'scores': scores, 'dates': dates, 'unavailable': unavailable, 'empty': empty}
+
+
+def retrieve_all_users_QOL(all_users):
+    # Compatibility API: callers needing completeness should use retrieve_rankings.
+    return retrieve_rankings(all_users)['scores']
 
 
 def get_top_three(scores):
     return top_three(scores)
 
 
-def display_it(rank, parent=None):
+def display_it(rank, parent=None, details=None):
     window = tk.Toplevel(parent) if parent else tk.Tk()
-    window.title('Latest QOL Rankings')
-    window.geometry('650x350')
-    tk.Label(window, text='LATEST TOP 3', font=('Helvetica', 22, 'bold')).pack(pady=20)
-    if not rank:
-        tk.Label(window, text='No scores yet. Submit your first day to get started.').pack()
+    window.title('QOL Group Rankings')
+    window.geometry('720x480')
+    frame = ttk.Frame(window, padding=15)
+    frame.pack(fill='both', expand=True)
+    incomplete = bool(details and details['unavailable'])
+    ttk.Label(frame, text='PARTIAL RANKINGS — some connections failed' if incomplete else 'LATEST RANKINGS',
+              font=('Helvetica', 18, 'bold')).pack(pady=10)
+    table_frame = ttk.Frame(frame)
+    table_frame.pack(fill='both', expand=True)
+    table = ttk.Treeview(table_frame, columns=('rank', 'name', 'score', 'date'), show='headings')
+    for key, label, width in [('rank', 'Rank', 55), ('name', 'Participant', 220), ('score', 'Score', 85), ('date', 'Entry date', 130)]:
+        table.heading(key, text=label); table.column(key, width=width)
+    scrollbar = ttk.Scrollbar(table_frame, orient='vertical', command=table.yview)
+    table.configure(yscrollcommand=scrollbar.set)
+    scrollbar.pack(side='right', fill='y'); table.pack(fill='both', expand=True)
     for place, (name, score) in enumerate(rank, 1):
-        tk.Label(window, text=f'{place}.  {name}    {score:g}', font=('Helvetica', 20)).pack(pady=8)
-    tk.Label(window, text='Each person’s latest entry; dates may differ. Ties sort by name.').pack(pady=12)
+        table.insert('', 'end', values=(place, name, f'{score:g}', (details or {}).get('dates', {}).get(name, '')))
+    if details:
+        for name in details['empty']:
+            table.insert('', 'end', values=('—', name, 'No score', ''))
+        for name in details['unavailable']:
+            table.insert('', 'end', values=('—', name, 'Unavailable', ''))
+    if not rank and not details:
+        ttk.Label(frame, text='No scores yet. Submit your first day to get started.').pack()
+    if incomplete:
+        ttk.Label(frame, text='Unavailable: ' + ', '.join(details['unavailable']) + '. Ask the organizer to check access, then retry.',
+                  foreground='#a00000', wraplength=670).pack(pady=8)
+    ttk.Label(frame, text='Each person’s latest numbered entry; dates may differ. Ties sort by name.', wraplength=670).pack(pady=8)
     if parent is None:
         window.mainloop()
     return window
+
+
+def display_rankings(details, parent=None):
+    rank = sorted(details['scores'].items(), key=lambda row: (-row[1], row[0].casefold()))
+    return display_it(rank, parent, details)
 
 
 def main():
@@ -41,7 +81,7 @@ def main():
     config = load_config()
     if config is None:
         raise SystemExit('Open the main QOL Score app to configure your account first.')
-    display_it(get_top_three(retrieve_all_users_QOL(config['all_users'])))
+    display_rankings(retrieve_rankings(config['all_users']))
 
 
 if __name__ == '__main__':
