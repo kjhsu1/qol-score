@@ -28,7 +28,7 @@ const brow1=box(head,darkGreen,-.14,.19,.3,.19,.04,.04);brow1.rotation.z=-.22;co
 ellipsoid(head,black,0,-.25,.29,.13,.055,.025);box(head,white,-.047,-.28,.325,.075,.12,.04);box(head,white,.047,-.28,.325,.075,.12,.04);
 const moustache1=ellipsoid(head,black,-.115,-.19,.34,.15,.035,.035);moustache1.rotation.z=.28;const moustache2=ellipsoid(head,black,.115,-.19,.34,.15,.035,.035);moustache2.rotation.z=-.28;
 ellipsoid(head,skin,-.3,0,.02,.075,.12,.055);ellipsoid(head,skin,.3,0,.02,.075,.12,.055);
-// Boyacki's tall, outward-swept twin points and red B crest.
+// Boyacki's widely splayed, outward-swept twin points and red B crest.
 // All face geometry above stays exactly the same.
 ellipsoid(head,green,0,.28,-.03,.35,.2,.29);
 ellipsoid(head,darkGreen,0,.23,.22,.37,.055,.14);
@@ -37,12 +37,16 @@ for(const side of [-1,1]){
  const vertices=[],indices=[],rings=18,segments=20;
  for(let ring=0;ring<=rings;ring++){
   const t=ring/rings,r=.145*Math.pow(1-t,.85)+.001;
-  const cx=side*(.25+.29*t+.035*Math.sin(t*Math.PI));
-  const cy=.3+.72*t,cz=-.05-.12*t;
+  const cx=side*(.27+.58*t+.02*Math.sin(t*Math.PI));
+  const cy=.3+.34*t,cz=-.05-.12*t;
+  const tangent=new THREE.Vector3(side*(.58+.02*Math.PI*Math.cos(t*Math.PI)),.34,-.12).normalize();
+  const radialU=new THREE.Vector3(0,0,1).cross(tangent).normalize();
+  const radialV=new THREE.Vector3().crossVectors(tangent,radialU).normalize();
   for(let j=0;j<=segments;j++){
    const angle=j/segments*Math.PI*2;
-   vertices.push(cx+Math.cos(angle)*r,cy,cz+Math.sin(angle)*r);
-   if(ring<rings&&j<segments){const k=ring*(segments+1)+j;indices.push(k,k+segments+1,k+1,k+1,k+segments+1,k+segments+2);}
+   const offset=radialU.clone().multiplyScalar(Math.cos(angle)*r).addScaledVector(radialV,Math.sin(angle)*r);
+   vertices.push(cx+offset.x,cy+offset.y,cz+offset.z);
+   if(ring<rings&&j<segments){const k=ring*(segments+1)+j;indices.push(k,k+1,k+segments+1,k+1,k+segments+2,k+segments+1);}
   }
  }
  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.setIndex(indices);geometry.computeVertexNormals();

@@ -30,3 +30,7 @@ On another physical Apple Silicon Mac, download/extract, handle Gatekeeper if pr
 The 3D mascot now has the signature tall twin-pointed green hat, gold ear covers and red B crest. Face geometry is unchanged. Browser interaction/graphics fallback/motion tests and the native WebKit smoke test passed. The architecture/resource/signature build gate passed. No scoring or Notion changes.
 
 SHA-256: `5cd4feb6c845afc22c120d7fbbb6019c76cd28307ae6128ce4edf51ccd92f387`
+
+## Wider hat points — 2.0.2
+
+Spread the green hat points outward and lowered the tips to match the reference silhouette; face geometry is unchanged. Browser interaction, walking/pause, WebGL 1 and graphics fallback tests passed. The rebuilt native WebKit smoke test passed on the M1 Pro host, and the ARM64/resource/signature build gate passed. Scoring and Notion behavior are unchanged.
