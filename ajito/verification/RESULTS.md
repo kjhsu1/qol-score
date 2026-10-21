@@ -34,3 +34,11 @@ SHA-256: `5cd4feb6c845afc22c120d7fbbb6019c76cd28307ae6128ce4edf51ccd92f387`
 ## Wider hat points — 2.0.2
 
 Spread the green hat points outward and lowered the tips to match the reference silhouette; face geometry is unchanged. Browser interaction, walking/pause, WebGL 1 and graphics fallback tests passed. The rebuilt native WebKit smoke test passed on the M1 Pro host, and the ARM64/resource/signature build gate passed. Scoring and Notion behavior are unchanged.
+
+## Ocean Beach banner and UI cleanup — 2.0.3
+
+Uses the approved less-dramatic Boyacki portrait and banner variation A: dark, forward-slanted Japanese headline with comma and period over a light coastal wash. Noto Sans JP Bold is locally bundled as a small renamed character subset, with its OFL license; font loading passed in both Chromium and native WebKit. Removed the requested decorative labels, score-panel filler and footer; scoring guide stays under More. Validation errors remain visible and clear after correction.
+
+All 77 regression tests passed. Browser tests passed for save review, duplicates, invalid and offline submissions, rankings including partial data, onboarding failure, history, analytics, CSV, walking/pause, widths 1440/1024/800/390, WebGL 1/older dialog fallback and no-GPU core workflow. Packaged native smoke passed on the existing M1 Pro/macOS 26.4 host. ARM64/minimum-OS/resources/signature gate passed for 55 native binaries, including bundled font/license. ZIP assets were compared byte-for-byte against source. Scoring, Notion writes and group setup still match main. This does not add physical testing on other Macs or macOS versions.
+
+ZIP SHA-256: `8864e3d5f0496d7729b583ccb015f5dda7ca9f07984bb85bb477113357fdc224`

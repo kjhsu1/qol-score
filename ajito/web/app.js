@@ -33,15 +33,13 @@ function showPage(name){
  if(setupBusy||saving){notice('Please let the current request finish.');return;}
  for(const el of document.querySelectorAll('.page'))el.classList.toggle('active',el.id===name);
  for(const el of document.querySelectorAll('[data-page]')){el.classList.toggle('active',el.dataset.page===name);el.setAttribute('aria-current',el.dataset.page===name?'page':'false');}
- $('page-label').textContent={daily:'DAILY CONSOLE',rankings:'CREW RANKINGS',history:'MISSION ARCHIVE',guide:'SCORING MANUAL',settings:'GROUP & SETTINGS',insights:'WEEKLY DEBRIEF',lab:'DAY LAB'}[name];
+ $('page-label').textContent={daily:'Daily log',rankings:'Rankings',history:'History',guide:'Scoring manual',settings:'Group & settings',insights:'Weekly debrief',lab:'Day lab'}[name];
  window.scrollTo({top:0,behavior:document.body.classList.contains('motion-off')?'auto':'smooth'});
  if(name==='rankings')loadRankings();if(name==='history')loadHistory();if(name==='insights')loadInsights();if(name==='lab')loadLab();
 }
 function updateIdentity(data){
  state=data;$('profile-name').textContent=data.user||'Join your crew';$('profile-zone').textContent=data.timezone;$('avatar').textContent=(data.user||'?').slice(0,1).toUpperCase();
- $('welcome-copy').textContent=data.user?`${data.user}’s station. Ready when you are.`:"Your day, your score, your crew.";
  $('group-timezone').value=data.timezone;$('solo-timezone').value=data.timezone;
- $('breadcrumb').textContent=(data.group_name||'DORONBO HQ').toUpperCase();
  $('top-date').textContent=new Date(data.today+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
  if(!$('log-date').value)$('log-date').value=data.today;
  if(data.demo)banner('DEMO CONSOLE — this preview uses sample crew data. Nothing is sent to Notion.');
@@ -51,21 +49,20 @@ function updateIdentity(data){
  if(data.configured)loadLatest();
 }
 async function loadLatest(){
- try{const data=await api('latest');$('entry-number').textContent=String(data.number).padStart(3,'0');const s=streak(data.streak);$('your-streak').textContent=data.score==null?'Your first mission awaits':s.kind==='neutral'?s.text:`${s.kind==='good'?'Good':'Bad'} streak · ${Math.abs(data.streak)} entries`;$('latest-score').textContent=data.score==null?'Save your first day to start a streak.':`Latest: ${scoreText(data.score)} points · ${(data.date||'').slice(0,10)}`;}
+ try{const data=await api('latest');$('entry-number').textContent=String(data.number).padStart(3,'0');const s=streak(data.streak);$('your-streak').textContent=data.score==null?'No streak yet':s.kind==='neutral'?s.text:`${s.kind==='good'?'Good':'Bad'} streak · ${Math.abs(data.streak)} entries`;$('latest-score').textContent=data.score==null?'Save your first day to start a streak.':`Latest: ${scoreText(data.score)} points · ${(data.date||'').slice(0,10)}`;}
  catch(error){$('entry-number').textContent='—';$('your-streak').textContent='Notion is unavailable';$('latest-score').textContent='Your form is ready. Check your connection and retry.';banner(error.message);}
 }
 async function updatePreview(){
  const seq=++previewSequence;preview=null;
- if(!$('focused').value||!$('social').value||!$('log-date').value||!$('wake').value||!$('bed').value){$('score').textContent='—';$('efficiency').textContent='—%';$('efficiency-fill').style.width='0%';$('gauge-fill').style.strokeDasharray='0 100';$('route').textContent='Awaiting your coordinates';$('score-caption').textContent='Fill in your minutes to power up the reactor.';return;}
+ if(!$('focused').value||!$('social').value||!$('log-date').value||!$('wake').value||!$('bed').value){$('score').textContent='—';$('efficiency').textContent='—%';$('efficiency-fill').style.width='0%';$('gauge-fill').style.strokeDasharray='0 100';$('route').textContent='Enter your minutes';$('score-caption').textContent='';$('score-caption').hidden=true;return;}
  try{
  const result=await api('preview',entry());if(seq!==previewSequence)return;preview=result;
  $('score').textContent=scoreText(result.score);$('efficiency').textContent=result.efficiency+'%';$('efficiency-fill').style.width=Math.min(100,result.efficiency)+'%';$('awake-hours').textContent=`of ${(result.awake_minutes/60).toFixed(1)}h awake`;
  $('gauge-fill').style.strokeDasharray=`${result.score} 100`;$('gauge-fill').style.stroke=result.score>=65?'#bfd58b':'#df9b68';
- $('route').textContent=result.offday?'SPECIAL DAY · 100 POINTS':result.route==='healthy'?'HEALTHY ROUTE LEADING':'PRODUCTIVE ROUTE LEADING';
- $('score-caption').textContent=result.offday?'An agreed day off. Recharge your machinery.':result.score>=90?'90+ points. A strong day.':result.score>=65?'65+ points. This counts toward a good streak.':'Below 65. Check the deductions below.';
- $('breakdown').innerHTML=[['Healthy route deduction',result.healthy_deduction],['Productive route deduction',result.productive_deduction],['Wake timing',result.wake_deduction],['Bedtime timing',result.bed_deduction],['Social media',result.social_deduction]].map(([label,value])=>`<div><span>${label}</span><strong>−${scoreText(value)}</strong></div>`).join('')+(result.offday?'<div><span>Special-day override</span><strong>100</strong></div>':'');
+ $('route').textContent=result.offday?'Off day':result.route==='healthy'?'Healthy route':'Productive route';
+ $('score-caption').textContent='';$('score-caption').hidden=true;
  $('form-error').hidden=true;
- }catch(error){if(seq!==previewSequence)return;$('score').textContent='—';$('route').textContent='CHECK YOUR COORDINATES';$('score-caption').textContent=error.message;$('gauge-fill').style.strokeDasharray='0 100';$('efficiency').textContent='—%';$('efficiency-fill').style.width='0%';}
+ }catch(error){if(seq!==previewSequence)return;$('score').textContent='—';$('route').textContent='Check your inputs';$('score-caption').textContent=error.message;$('score-caption').hidden=false;$('gauge-fill').style.strokeDasharray='0 100';$('efficiency').textContent='—%';$('efficiency-fill').style.width='0%';}
 }
 let previewTimer;function schedulePreview(){clearTimeout(previewTimer);previewTimer=setTimeout(updatePreview,180);}
 async function loadRankings(){
@@ -102,7 +99,6 @@ for(const button of document.querySelectorAll('[data-page]'))button.addEventList
 document.querySelector('.brand').addEventListener('click',e=>{e.preventDefault();showPage('daily');});
 for(const button of document.querySelectorAll('[data-habit]'))button.addEventListener('click',()=>{button.setAttribute('aria-pressed',button.getAttribute('aria-pressed')!=='true');schedulePreview();});
 $('day-form').addEventListener('input',schedulePreview);
-$('breakdown-toggle').addEventListener('click',()=>{const open=$('breakdown').hidden;$('breakdown').hidden=!open;$('breakdown-toggle').setAttribute('aria-expanded',open);});
 $('refresh-rankings').addEventListener('click',loadRankings);$('refresh-history').addEventListener('click',loadHistory);
 $('day-form').addEventListener('submit',async event=>{
  event.preventDefault();if(!state?.configured){showPage('settings');return;}

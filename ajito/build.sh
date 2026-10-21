@@ -16,10 +16,10 @@ xcrun clang -fobjc-arc -O2 -arch arm64 -mmacosx-version-min=11.1 ajito/native/Aj
 "$QOL_BUILD_PYTHON" - <<'PY'
 import plistlib
 from pathlib import Path
-info={'CFBundleName':'QOL Score Ajito','CFBundleDisplayName':"QOL Score · Boyacky's Ajito",'CFBundleExecutable':'QOL Ajito','CFBundleIdentifier':'com.qolscore.ajito','CFBundlePackageType':'APPL','CFBundleVersion':'4','CFBundleShortVersionString':'2.0.2','LSMinimumSystemVersion':'11.1','NSHighResolutionCapable':True,'NSAppTransportSecurity':{'NSAllowsLocalNetworking':True},'NSPrincipalClass':'NSApplication','CFBundleIconFile':'Ajito.icns'}
+info={'CFBundleName':'QOL Score Ajito','CFBundleDisplayName':"QOL Score · Boyacky's Ajito",'CFBundleExecutable':'QOL Ajito','CFBundleIdentifier':'com.qolscore.ajito','CFBundlePackageType':'APPL','CFBundleVersion':'5','CFBundleShortVersionString':'2.0.3','LSMinimumSystemVersion':'11.1','NSHighResolutionCapable':True,'NSAppTransportSecurity':{'NSAllowsLocalNetworking':True},'NSPrincipalClass':'NSApplication','CFBundleIconFile':'Ajito.icns'}
 Path('dist/QOL Score Ajito.app/Contents/Info.plist').write_bytes(plistlib.dumps(info))
 PY
 /usr/bin/codesign --force --deep --sign - "$APP"
 /usr/bin/codesign --verify --deep --strict "$APP"
 "$QOL_BUILD_PYTHON" ajito/verify.py "$APP"
-/usr/bin/ditto -c -k --sequesterRsrc --keepParent "$APP" dist/QOL-Score-Ajito-v2.0.2-macOS-arm64.zip
+/usr/bin/ditto -c -k --sequesterRsrc --keepParent "$APP" dist/QOL-Score-Ajito-v2.0.3-macOS-arm64.zip

@@ -4,7 +4,7 @@ A self-contained native Mac app with a WebKit interface, a 3D Doronbo hideout, a
 
 ## Open it
 
-Unzip `dist/QOL-Score-Ajito-v2.0.2-macOS-arm64.zip`, drag **QOL Score Ajito.app** into Applications, and open it. The target is **Apple Silicon, macOS 11.1 or later**. The build is ad-hoc signed, without Developer ID/notarization: a downloaded copy may require System Settings → Privacy & Security → Open Anyway. The original app can remain installed.
+Unzip `dist/QOL-Score-Ajito-v2.0.3-macOS-arm64.zip`, drag **QOL Score Ajito.app** into Applications, and open it. The target is **Apple Silicon, macOS 11.1 or later**. The build is ad-hoc signed, without Developer ID/notarization: a downloaded copy may require System Settings → Privacy & Security → Open Anyway. The original app can remain installed.
 
 Existing installations use the same `~/Library/Application Support/QOL Score/config.json`: same selected person, integration tokens, timezone, database IDs, group roster and optional legacy configuration. There is no migration of Notion records or token rotation. A fresh installation opens Group & settings: import the existing invitation JSON, select your own name, paste the organizer's existing token, and verify connections. Settings changes check every participant and preserve damaged settings in a backup before replacement. Switching identity clears the daily form to avoid carrying another person's diary/inputs across accounts.
 

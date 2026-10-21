@@ -32,7 +32,7 @@ def verify(path):
             if dep.startswith('/') and not dep.startswith(('/usr/lib/','/System/Library/')):issues.append('External dependency: '+dep)
             if dep.startswith('@loader_path/') and not (p.parent/dep.removeprefix('@loader_path/')).exists():issues.append('Missing dependency: '+dep)
     internal=root/'Contents/Resources/backend/_internal'
-    for relative in ('tzdata/zoneinfo/America/Los_Angeles','tzdata/zoneinfo/Asia/Tokyo','tzdata/zoneinfo/Europe/London','certifi/cacert.pem','ajito/web/index.html','ajito/web/app.js','ajito/web/style.css','ajito/web/mascot.js','ajito/web/vendor/three.module.min.js','ajito/web/assets/ajito.png'):
+    for relative in ('tzdata/zoneinfo/America/Los_Angeles','tzdata/zoneinfo/Asia/Tokyo','tzdata/zoneinfo/Europe/London','certifi/cacert.pem','ajito/web/index.html','ajito/web/app.js','ajito/web/style.css','ajito/web/mascot.js','ajito/web/vendor/three.module.min.js','ajito/web/assets/ajito.png','ajito/web/assets/ajito-banner-bold.ttf','ajito/web/assets/NOTO-OFL.txt'):
         if not (internal/relative).is_file():issues.append('Missing resource: '+relative)
     if not (root/'Contents/Resources/backend/QOLService').is_file():issues.append('Missing service')
     if list(root.rglob('config.json')) or list(root.rglob('config.local.json')):issues.append('Private configuration included')

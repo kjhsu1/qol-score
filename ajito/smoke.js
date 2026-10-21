@@ -15,4 +15,9 @@ for(let i=0;i<30&&document.body.dataset.mascot!=='ready';i++)await wait(100);
 check(document.body.dataset.mascot==='ready','3D mascot did not render');
 document.getElementById('more-toggle').click();document.querySelector('[data-page="insights"]').click();await wait(500);check(document.getElementById('insight-summary').textContent.includes('19 days'),'Debrief failed');document.querySelector('[data-page="lab"]').click();await wait(500);check(document.querySelectorAll('.scenario-row').length>0,'Day lab failed');document.querySelector('[data-page="daily"]').click();
 window.scrollTo(0,0);
-return {ok:true,bootstrap:'passed',healthy_preview:95,productive_preview:97,rankings:'all 3 with good/bad streaks',history:'passed',review_and_save:'passed (demo; no Notion writes)',more_tools:'debrief, focus scatter, habit comparisons and day lab passed',mascot:'WebGL rendered',width:innerWidth,height:innerHeight};
+// Verify the bundled Japanese headline font loads without a system fallback.
+const headlineFonts=await document.fonts.load('700 40px "Ajito Banner"','限界を超えろ、運命を変えろ。');
+check(headlineFonts.length>0,'Bundled headline font did not load');
+// Let the daily page transition finish before the native snapshot.
+await wait(400);
+return {ok:true,bootstrap:'passed',healthy_preview:95,productive_preview:97,rankings:'all 3 with good/bad streaks',history:'passed',review_and_save:'passed (demo; no Notion writes)',more_tools:'debrief, focus scatter, habit comparisons and day lab passed',mascot:'WebGL rendered',headline_font:'bundled Bold weight loaded',width:innerWidth,height:innerHeight};
