@@ -28,10 +28,30 @@ const brow1=box(head,darkGreen,-.14,.19,.3,.19,.04,.04);brow1.rotation.z=-.22;co
 ellipsoid(head,black,0,-.25,.29,.13,.055,.025);box(head,white,-.047,-.28,.325,.075,.12,.04);box(head,white,.047,-.28,.325,.075,.12,.04);
 const moustache1=ellipsoid(head,black,-.115,-.19,.34,.15,.035,.035);moustache1.rotation.z=.28;const moustache2=ellipsoid(head,black,.115,-.19,.34,.15,.035,.035);moustache2.rotation.z=-.28;
 ellipsoid(head,skin,-.3,0,.02,.075,.12,.055);ellipsoid(head,skin,.3,0,.02,.075,.12,.055);
-// Soft engineer's cap with round brass goggles perched on top.
-ellipsoid(head,green,0,.28,-.03,.35,.2,.29);ellipsoid(head,darkGreen,0,.23,.22,.37,.055,.14);ellipsoid(head,purple,-.26,.16,-.07,.14,.22,.16);ellipsoid(head,purple,.26,.16,-.07,.14,.22,.16);
-for(const x of [-.14,.14]){const ring=new THREE.Mesh(new THREE.TorusGeometry(.085,.022,10,28),gold);ring.position.set(x,.37,.23);ring.rotation.x=-.35;head.add(ring);ellipsoid(head,lens,x,.37,.231,.067,.064,.015);}box(head,gold,0,.37,.23,.08,.025,.03);
-cone(head,darkGreen,-.29,.39,-.04,.08,.25,0,.45);cone(head,darkGreen,.29,.39,-.04,.08,.25,0,-.45);
+// Boyacki's tall, outward-swept twin points and red B crest.
+// All face geometry above stays exactly the same.
+ellipsoid(head,green,0,.28,-.03,.35,.2,.29);
+ellipsoid(head,darkGreen,0,.23,.22,.37,.055,.14);
+for(const side of [-1,1]){
+ ellipsoid(head,gold,side*.305,.13,-.055,.105,.17,.13);
+ const vertices=[],indices=[],rings=18,segments=20;
+ for(let ring=0;ring<=rings;ring++){
+  const t=ring/rings,r=.145*Math.pow(1-t,.85)+.001;
+  const cx=side*(.25+.29*t+.035*Math.sin(t*Math.PI));
+  const cy=.3+.72*t,cz=-.05-.12*t;
+  for(let j=0;j<=segments;j++){
+   const angle=j/segments*Math.PI*2;
+   vertices.push(cx+Math.cos(angle)*r,cy,cz+Math.sin(angle)*r);
+   if(ring<rings&&j<segments){const k=ring*(segments+1)+j;indices.push(k,k+segments+1,k+1,k+1,k+segments+1,k+segments+2);}
+  }
+ }
+ const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.setIndex(indices);geometry.computeVertexNormals();
+ head.add(new THREE.Mesh(geometry,green));
+}
+const crestCanvas=document.createElement('canvas');crestCanvas.width=128;crestCanvas.height=128;
+const crestContext=crestCanvas.getContext('2d');crestContext.fillStyle='#e56747';crestContext.font='bold 108px sans-serif';crestContext.textAlign='center';crestContext.textBaseline='middle';crestContext.fillText('B',64,69);
+const crestTexture=new THREE.CanvasTexture(crestCanvas);crestTexture.colorSpace=THREE.SRGBColorSpace;
+const crest=new THREE.Mesh(new THREE.PlaneGeometry(.15,.15),new THREE.MeshStandardMaterial({map:crestTexture,transparent:true,roughness:.7}));crest.position.set(0,.33,.278);head.add(crest);
 const legs=[],arms=[];
 for(const side of [-1,1]){
  const leg=new THREE.Group();leg.position.set(side*.15,.88,0);body.add(leg);ellipsoid(leg,green,0,-.19,0,.11,.24,.11);const shin=new THREE.Group();shin.position.y=-.36;leg.add(shin);ellipsoid(shin,darkGreen,0,-.13,0,.095,.19,.1);ellipsoid(shin,bootMat,0,-.29,.09,.135,.12,.22);box(shin,cream,0,-.21,.02,.18,.05,.17);legs.push({leg,shin});

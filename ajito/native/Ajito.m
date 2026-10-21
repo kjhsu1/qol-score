@@ -59,7 +59,7 @@
     });
 }
 - (void)reloadInterface {if(self.localURL)[self.web loadRequest:[NSURLRequest requestWithURL:self.localURL]];}
-- (void)about {NSAlert *a=[NSAlert new];a.messageText=@"QOL Score · Boyacky's Ajito";a.informativeText=@"Version 2.0.0\nA little hideout for better days.\nSame scoring model and Notion backend.\nFan-inspired Yatterman / Doronbo theme.";[a runModal];}
+- (void)about {NSAlert *a=[NSAlert new];a.messageText=@"QOL Score · Boyacky's Ajito";a.informativeText=@"Version 2.0.1\nA little hideout for better days.\nSame scoring model and Notion backend.\nFan-inspired Yatterman / Doronbo theme.";[a runModal];}
 - (void)fail:(NSString *)message {
     if(self.quitting)return;
     if(self.smokePath){[self finishSmoke:@{@"ok":@NO,@"error":message}];return;}

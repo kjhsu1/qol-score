@@ -1,7 +1,7 @@
 # Artwork and libraries
 
 - `web/assets/ajito.png`: created with the built-in image-generation tool, saved into this workspace from the generated output; no CLI/API key was used. The scene is fan-inspired Yatterman/Doronbo artwork. It is a background illustration, not a flattened UI.
-- `web/mascot.js`: original procedural 3D Boyacki model and animation in code, independent of the background illustration.
+- `web/mascot.js`: original procedural 3D Boyacki model and animation in code, independent of the background illustration. Version 2.0.1 replaces the small engineer cap with tall swept twin points, gold ear covers and a red B crest; face geometry is unchanged.
 - `icon.svg`, `Ajito.icns`: original vector skull button icon rendered at standard macOS icon sizes.
 - `web/vendor/three.module.min.js`: Three.js **0.160.1**, MIT; license in `THREE-LICENSE.txt`. This version supports WebGL 1. The application does not fetch it from a CDN.
 - Visual references inspected: https://teenage.engineering/products/ep-133 and https://poolsuite.net/. These informed material and navigation choices; their assets/code are not included.

@@ -60,7 +60,7 @@ class App:
         return {'configured': bool(cfg), 'user': cfg['user'] if cfg else None, 'timezone': zone,
             'participants': [name for name in cfg['all_users'] if name != 'User_Analysis_Requests_Database'] if cfg else [],
             'group_name': cfg.get('group_name', 'QOL crew') if cfg else 'Your crew',
-            'today': today, 'config_error': self.error, 'demo': self.demo, 'version': '2.0.0'}
+            'today': today, 'config_error': self.error, 'demo': self.demo, 'version': '2.0.1'}
 
     @staticmethod
     def preview(data):

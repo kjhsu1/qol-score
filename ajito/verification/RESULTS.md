@@ -24,3 +24,9 @@ The same invitation JSON works. Main is unchanged; the work is on `codex/qol-aji
 ## Remaining recipient checks
 
 On another physical Apple Silicon Mac, download/extract, handle Gatekeeper if prompted, open, import the existing invitation, choose the correct identity, verify rankings, and make a deliberate real daily save when ready. Check the database and reopen. Test file export. The app is not Developer ID signed/notarized and may need Open Anyway. WebGL-disabled environments cannot display the 3D character; core workflows remain usable. No claim is made that every Apple Silicon/OS combination has passed.
+
+## Hat update — 2.0.1
+
+The 3D mascot now has the signature tall twin-pointed green hat, gold ear covers and red B crest. Face geometry is unchanged. Browser interaction/graphics fallback/motion tests and the native WebKit smoke test passed. The architecture/resource/signature build gate passed. No scoring or Notion changes.
+
+SHA-256: `5cd4feb6c845afc22c120d7fbbb6019c76cd28307ae6128ce4edf51ccd92f387`
